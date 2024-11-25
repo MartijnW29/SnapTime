@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SnapTime.LoginPage"
+             Title="LoginPage">
+    
+    <StackLayout Margin="20">
+
+        <Frame
+        BackgroundColor="Aquamarine"
+        Padding="24"
+        CornerRadius="20">
+
+            <Label
+            Text="SnapTime"
+            TextColor="Bisque"
+            FontSize="16"
+            HorizontalOptions="Center"/>
+        </Frame>
+
+        <StackLayout
+        Spacing="25"
+        Padding="30"
+        VerticalOptions="CenterAndExpand"
+        HorizontalOptions="Center">
+
+            <Label
+            x:Name="UsernameLabel"
+            Text="Gebruikersnaam"/>
+
+            <Entry
+            x:Name="UsernameEntry"
+            Placeholder="Voer hier je gebruikersnaam in!"/>
+
+            <Label
+            x:Name="PasswordLabel"
+            Text="Wachtwoord"/>
+
+            <Entry
+            x:Name="PasswordEntry"
+            Placeholder="Voer hier je wachtwoord in!"
+            IsPassword="True"/>
+
+
+            <Button
+            x:Name="LogInButton"
+            Text="Inloggen"
+            BackgroundColor="Aquamarine"
+            TextColor="Bisque"
+            Clicked="OnLoginButtonClicked"/>
+
+        </StackLayout>
+    </StackLayout>
+    
+</ContentPage>
