@@ -2,9 +2,17 @@
 <TabbedPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SnapTime.TabbedPage1"
-             xmlns:local="clr-namespace:SnapTime">
-    
-    <local:MainPage Title="MainPage" />
+             xmlns:local="clr-namespace:SnapTime"
+            
+            
+             xmlns:android="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;assembly=Microsoft.Maui.Controls"
+             android:TabbedPage.ToolbarPlacement="Bottom">
+                      <!--HEEL BELANGRIJK-->
+
+
+    <!--  Pages can be added as references or inline  -->
+
+    <local:MainPage Title="MainPage" IconImageSource="Resources\Images\Icons\camera.png" />
 
 
 </TabbedPage>
