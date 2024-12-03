@@ -12,7 +12,15 @@
 
     <!--  Pages can be added as references or inline  -->
 
-    <local:MainPage Title="MainPage" IconImageSource="Resources\Images\Icons\camera.png" />
+    <local:MainPage Title="Instellingen" IconImageSource="settings.png" />
+
+    <local:MainPage Title="Home" IconImageSource="home.png" />
+
+    <local:MainPage Title="Camera" IconImageSource="camera.png" />
+
+    <local:MainPage Title="Vrienden" IconImageSource="friends.png" />
+
+    <local:MainPage Title="Races" IconImageSource="raceflag.png" />
 
 
 </TabbedPage>
