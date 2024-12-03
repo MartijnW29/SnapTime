@@ -59,16 +59,11 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\AppIcon\SnapTime.png" />
-	  <None Remove="Resources\AppIcon\test1.png" />
 	  <None Remove="Resources\Images\Icons\camera.png" />
 	  <None Remove="Resources\Images\Icons\friends.png" />
 	  <None Remove="Resources\Images\Icons\home.png" />
 	  <None Remove="Resources\Images\Icons\raceflag.png" />
 	  <None Remove="Resources\Images\Icons\settings.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiIcon Include="Resources\AppIcon\test1.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -80,6 +75,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="FirebaseDatabase.net" Version="4.2.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
@@ -94,9 +90,13 @@
 	  <MauiXaml Update="LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="TabbedPage1.xaml">
+	  <MauiXaml Update="MainBar.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Classes\" />
 	</ItemGroup>
 
 </Project>

@@ -6,7 +6,7 @@
         {
             InitializeComponent();
 
-            MainPage = new TabbedPage1();
+            MainPage = new MainBar();
         }
     }
 }
