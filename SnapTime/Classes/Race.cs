@@ -18,7 +18,7 @@ namespace SnapTime.Classes
         
 
 
-        public int? HostId { get; set; }
+        public string? HostId { get; set; }
         public User? Host { get; set; }
 
 

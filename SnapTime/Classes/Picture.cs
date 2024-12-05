@@ -12,7 +12,7 @@ namespace SnapTime.Classes
 
         public byte[]? Image { get; set; }
 
-        public int ownerId { get; set; }
+        public string ownerId { get; set; }
         public User? owner { get; set; }
 
         public List<Comment>? comments { get; set; }

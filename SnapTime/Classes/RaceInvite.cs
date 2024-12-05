@@ -12,7 +12,7 @@ namespace SnapTime.Classes
 
         public bool Accepted { get; set; }
 
-        public int InvitedId { get; set; }
+        public string InvitedId { get; set; }
         public User? Invited { get; set; }
 
         public int raceId { get; set; }

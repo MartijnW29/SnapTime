@@ -4,11 +4,22 @@
              x:Class="SnapTime.HomePage"
              Title="HomePage">
     <VerticalStackLayout>
+
+
         <Label 
-            Text="Welcome to .NET MAUI!"
+            x:Name="SnapletsLabel"
+            Text="Snaplets: ???" 
+            VerticalOptions="End" 
+            HorizontalOptions="End"
+            Margin="25"
+            FontSize="20"/>
+
+        <Label 
+            x:Name="TotalPicturesTakenLabel"
+            Text="Total Pictures Taken: ???" 
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
-        
-        
+
+
     </VerticalStackLayout>
 </ContentPage>

@@ -41,14 +41,7 @@ namespace SnapTime
                 // Controleer of de gebruiker bestaat
                 var userId = await _firebaseHelper.CheckUserExistence(email, username, password);
 
-                if (userId != -1)
-                {
-                    // Gebruiker gevonden, log in en navigeer naar het hoofdscherm
-
-                    //await DisplayAlert("Inloggen", "Inloggen is gelukt!", "OK");
-                    Application.Current.MainPage = new MainBar(); // Navigeer naar het hoofdscherm
-                }
-                else
+                if (userId != null)
                 {
                     var user = await _firebaseHelper.GetUserById(userId);
 
@@ -58,6 +51,13 @@ namespace SnapTime
                         App.CurrentUser = user;
                     }
 
+                    // Gebruiker gevonden, log in en navigeer naar het hoofdscherm
+
+                    //await DisplayAlert("Inloggen", "Inloggen is gelukt!", "OK");
+                    Application.Current.MainPage = new MainBar(); // Navigeer naar het hoofdscherm
+                }
+                else
+                {
                         // Gebruiker niet gevonden, toon een foutmelding
                         await DisplayAlert("Fout", "Ongeldige e-mail of wachtwoord.", "OK");
                 }

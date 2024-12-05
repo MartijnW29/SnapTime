@@ -18,7 +18,25 @@ namespace SnapTime.Services
             _firebaseClient = new FirebaseClient("https://snaptime-23f71-default-rtdb.europe-west1.firebasedatabase.app/");
         }
 
-        public async Task<User> GetUserById(int userId)
+        public async Task UpdateSpecificUser(string userId, User updatedUser)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException("User ID mag niet leeg zijn.");
+            }
+
+            if (updatedUser == null)
+            {
+                throw new ArgumentNullException(nameof(updatedUser), "Updated user mag niet null zijn.");
+            }
+
+            await _firebaseClient
+                .Child("users")        // De node waar de gebruikers staan
+                .Child(userId)         // Het unieke ID van de gebruiker
+                .PutAsync(updatedUser); // Vervang de gebruiker met de nieuwe gegevens
+        }
+
+        public async Task<User> GetUserById(string userId)
         {
             var users = await _firebaseClient
                 .Child("users")
@@ -29,31 +47,42 @@ namespace SnapTime.Services
         }
 
 
-        public async Task<int> CheckUserExistence(string email, string Username, string password)
+        public async Task<string> CheckUserExistence(string email, string Username, string password)
         {
             var users = await _firebaseClient
                 .Child("users")
                 .OnceAsync<User>();
 
-                foreach (var u in users)
+            foreach (var u in users)
+            {
+                if (u.Object.Email == email && u.Object.Password == password || u.Object.Username == Username && u.Object.Password == password)
                 {
-                    if (u.Object.Email == email && u.Object.Password == password || u.Object.Username == Username && u.Object.Password == password)
-                    {
-                        return u.Object.Id;
-                    }
+                    return u.Object.Id;
                 }
-                return -1;
-
+            }
+            return null;
         }
 
         // Voeg een nieuwe gebruiker toe aan de database
         public async Task MakeAccount(User user)
         {
-            await _firebaseClient
+            // Voeg de gebruiker toe aan de Firebase-database
+            var result = await _firebaseClient
                 .Child("users")
                 .PostAsync(user);
+
+            // Haal de unieke Firebase-sleutel op en sla die op als Id
+            string userId = result.Key;
+            user.Id = userId; // Wijs de gegenereerde sleutel toe aan het user-object
+
+            // Update de gebruiker in Firebase met de nieuwe Id
+            await _firebaseClient
+                .Child("users")
+                .Child(userId) // Gebruik de gegenereerde sleutel hier
+                .PutAsync(user);
         }
-    
+
+
 
 
         // Voeg data toe
