@@ -3,6 +3,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 using SnapTime.Services;
 using System.IO;
+using System.Net;
 
 namespace SnapTime;
 
@@ -111,7 +112,7 @@ public partial class FotoPage : ContentPage
 
                     var response = await client.PostAsync(url, content);
 
-                    if (App.CurrentUser != null)
+                    if (App.CurrentUser != null && response.StatusCode == HttpStatusCode.OK)
                     {
                         // Verhoog het aantal foto's lokaal
                         App.CurrentUser.TotalPicturesTaken += 1;
