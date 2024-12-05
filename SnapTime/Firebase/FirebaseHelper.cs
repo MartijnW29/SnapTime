@@ -18,7 +18,18 @@ namespace SnapTime.Services
             _firebaseClient = new FirebaseClient("https://snaptime-23f71-default-rtdb.europe-west1.firebasedatabase.app/");
         }
 
-        public async Task<int> CheckUserExistence(string email, string password)
+        public async Task<User> GetUserById(int userId)
+        {
+            var users = await _firebaseClient
+                .Child("users")
+                .OnceAsync<User>();
+
+            var user = users.FirstOrDefault(u => u.Object.Id == userId)?.Object;
+            return user;
+        }
+
+
+        public async Task<int> CheckUserExistence(string email, string Username, string password)
         {
             var users = await _firebaseClient
                 .Child("users")
@@ -26,7 +37,7 @@ namespace SnapTime.Services
 
                 foreach (var u in users)
                 {
-                    if (u.Object.Email == email && u.Object.Password == password)
+                    if (u.Object.Email == email && u.Object.Password == password || u.Object.Username == Username && u.Object.Password == password)
                     {
                         return u.Object.Id;
                     }
