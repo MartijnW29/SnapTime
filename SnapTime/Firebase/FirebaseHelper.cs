@@ -1,5 +1,6 @@
 ﻿using Firebase.Database;
 using Firebase.Database.Query;
+using SnapTime.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,33 @@ namespace SnapTime.Services
             // Vervang door jouw Firebase Database URL
             _firebaseClient = new FirebaseClient("https://snaptime-23f71-default-rtdb.europe-west1.firebasedatabase.app/");
         }
+
+        public async Task<int> CheckUserExistence(string email, string password)
+        {
+            var users = await _firebaseClient
+                .Child("users")
+                .OnceAsync<User>();
+
+                foreach (var u in users)
+                {
+                    if (u.Object.Email == email && u.Object.Password == password)
+                    {
+                        return u.Object.Id;
+                    }
+                }
+                return -1;
+
+        }
+
+        // Voeg een nieuwe gebruiker toe aan de database
+        public async Task MakeAccount(User user)
+        {
+            await _firebaseClient
+                .Child("users")
+                .PostAsync(user);
+        }
+    
+
 
         // Voeg data toe
         public async Task AddItem<T>(T item, string node)

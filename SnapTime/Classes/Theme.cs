@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnapTime.Classes
 {
-    internal class Theme
+    public class Theme
     {
         public int Id { get; set; }
         public string Name { get; set; }

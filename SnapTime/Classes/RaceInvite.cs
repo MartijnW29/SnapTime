@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnapTime.Classes
 {
-    internal class RaceInvite
+    public class RaceInvite
     {
         public int Id { get; set; }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnapTime.Classes
 {
-    internal class FriendRequest
+    public class FriendRequest
     {
         public int Id { get; set; }
 
