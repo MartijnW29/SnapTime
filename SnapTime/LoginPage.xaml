@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SnapTime.LoginPage"
              Title="LoginPage">
-    
+
     <StackLayout Margin="20">
 
         <Frame
@@ -25,6 +25,14 @@
         HorizontalOptions="Center">
 
             <Label
+            x:Name="EmailLabel"
+            Text="Emailadres"/>
+
+            <Entry
+            x:Name="EmailEntry"
+            Placeholder="Voer hier je Email in!"/>
+
+            <Label
             x:Name="UsernameLabel"
             Text="Gebruikersnaam"/>
 
@@ -41,7 +49,6 @@
             Placeholder="Voer hier je wachtwoord in!"
             IsPassword="True"/>
 
-
             <Button
             x:Name="LogInButton"
             Text="Inloggen"
@@ -49,7 +56,15 @@
             TextColor="Bisque"
             Clicked="OnLoginButtonClicked"/>
 
+            <!-- Account aanmaken knop -->
+            <Button
+            x:Name="CreateAccountButton"
+            Text="Account aanmaken"
+            BackgroundColor="Aquamarine"
+            TextColor="Bisque"
+            Clicked="OnCreateAccountButtonClicked"/>
+
         </StackLayout>
     </StackLayout>
-    
+
 </ContentPage>

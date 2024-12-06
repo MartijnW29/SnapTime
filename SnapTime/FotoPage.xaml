@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SnapTime.FotoPage"
+             Title="FotoPage">
+
+    <Grid>
+        <!-- Voeg twee rijen toe: één voor de inhoud en één voor de knop -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <!-- Vult de resterende ruimte -->
+            <RowDefinition Height="Auto" />
+            <!-- Voor de knop -->
+        </Grid.RowDefinitions>
+
+        <!-- Label of andere inhoud in de bovenste rij -->
+        <VerticalStackLayout Grid.Row="0" VerticalOptions="Start" HorizontalOptions="Center">
+            <Label 
+                Text="FOTO!"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <!-- Knop helemaal onderaan -->
+        <Button
+            x:Name="PictureButton"
+            Text="Maak foto" 
+            SemanticProperties.Hint="maak een foto"
+            Clicked="TakePictureAsync"
+            HorizontalOptions="Fill"
+            VerticalOptions="End"
+            Margin="20"
+            Grid.Row="1"/>
+    </Grid>
+</ContentPage>
