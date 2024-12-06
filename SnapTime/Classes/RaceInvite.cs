@@ -8,11 +8,11 @@ namespace SnapTime.Classes
 {
     public class RaceInvite
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         public bool Accepted { get; set; }
 
-        public string InvitedId { get; set; }
+        public string? InvitedId { get; set; }
         public User? Invited { get; set; }
 
         public int raceId { get; set; }

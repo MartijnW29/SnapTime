@@ -8,14 +8,14 @@ namespace SnapTime.Classes
 {
     public class FriendRequest
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         public bool Accepted { get; set; }
 
-        public string SenderId { get; set; }
+        public string? SenderId { get; set; }
         public User? Sender { get; set; }
 
-        public string ReceiverId { get; set; }
+        public string? ReceiverId { get; set; }
         public User? Receiver { get; set; }
         
     }

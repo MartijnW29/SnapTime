@@ -8,11 +8,11 @@ namespace SnapTime.Classes
 {
     public class Picture
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         public byte[]? Image { get; set; }
 
-        public string ownerId { get; set; }
+        public string? ownerId { get; set; }
         public User? owner { get; set; }
 
         public List<Comment>? comments { get; set; }

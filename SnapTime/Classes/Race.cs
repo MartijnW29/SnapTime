@@ -8,7 +8,7 @@ namespace SnapTime.Classes
 {
     public class Race
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         public string? Type { get; set; }
 

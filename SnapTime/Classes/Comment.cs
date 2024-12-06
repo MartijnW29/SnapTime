@@ -8,7 +8,7 @@ namespace SnapTime.Classes
 {
     public class Comment
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         public string? CommenterUsername { get; set; }
 
