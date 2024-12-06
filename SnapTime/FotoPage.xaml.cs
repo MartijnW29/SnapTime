@@ -112,8 +112,36 @@ public partial class FotoPage : ContentPage
 
                     var response = await client.PostAsync(url, content);
 
-                    if (App.CurrentUser != null && response.StatusCode == HttpStatusCode.OK)
+                    if (App.CurrentUser != null && (int)response.StatusCode >= 200 && (int)response.StatusCode <= 300)
                     {
+                        
+
+                        // score voor je foto
+                        if ((int)response.StatusCode == 200)
+                        {
+                            App.CurrentUser.Snaplets += 0;
+                        }
+                        else if ((int)response.StatusCode == 205)
+                        {
+                            App.CurrentUser.Snaplets -= 5;
+                        }
+                        else if((int)response.StatusCode == 210)
+                        {
+                            App.CurrentUser.Snaplets += 1;
+                        }
+                        else if ((int)response.StatusCode == 220)
+                        {
+                            App.CurrentUser.Snaplets += 2;
+                        }
+                        else if ((int)response.StatusCode == 230)
+                        {
+                            App.CurrentUser.Snaplets += 3;
+                        }
+                        else if ((int)response.StatusCode == 299)
+                        {
+                            Console.WriteLine("Fout in Pipedream");
+                        }
+
                         // Verhoog het aantal foto's lokaal
                         App.CurrentUser.TotalPicturesTaken += 1;
 
@@ -123,6 +151,7 @@ public partial class FotoPage : ContentPage
                         await firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id.ToString(), App.CurrentUser);
 
                         Console.WriteLine($"Totaal aantal foto's bijgewerkt: {App.CurrentUser.TotalPicturesTaken}");
+                        Console.WriteLine($"Totaal aantal Snaplets bijgewerkt: {App.CurrentUser.Snaplets}");
                     }
 
                     else
