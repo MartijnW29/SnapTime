@@ -2,10 +2,10 @@ namespace SnapTime;
 
 public partial class MainBar : TabbedPage
 {
-    public MainBar()
+    public MainBar(int page = 1)
     {
         InitializeComponent();
 
-        CurrentPage = Children[1]; // Index 1 verwijst naar het tweede tabblad ("Home")
+        CurrentPage = Children[page]; // Index 1 verwijst naar het tweede tabblad ("Home")
     }
 }

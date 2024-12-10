@@ -21,6 +21,30 @@
                 HorizontalOptions="Center" />
         </VerticalStackLayout>
 
+
+        <!-- Overlay voor laadindicator -->
+        <Grid Grid.RowSpan="2" BackgroundColor="Transparent" IsVisible="False" x:Name="LoadingOverlay">
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <!-- Label voor status -->
+                <Label 
+                    Text="Wacht even, je foto wordt verwerkt..." 
+                    FontSize="Medium" 
+                    HorizontalOptions="Center" 
+                    VerticalOptions="Center" />
+
+                <!-- ActivityIndicator als GIF -->
+                <ActivityIndicator 
+                    IsRunning="True" 
+                    Color="Aqua"
+                    WidthRequest="250" 
+                    HeightRequest="250" 
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+
+
+
         <!-- Knop helemaal onderaan -->
         <Button
             x:Name="PictureButton"

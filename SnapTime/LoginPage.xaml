@@ -13,8 +13,9 @@
 
             <Label
             Text="SnapTime"
-            TextColor="Bisque"
-            FontSize="16"
+            TextColor="DarkBlue"
+            FontSize="36"
+                FontAttributes="Italic"
             HorizontalOptions="Center"/>
         </Frame>
 
@@ -53,7 +54,8 @@
             x:Name="LogInButton"
             Text="Inloggen"
             BackgroundColor="Aquamarine"
-            TextColor="Bisque"
+            TextColor="DarkBlue"
+                FontAttributes="Bold"
             Clicked="OnLoginButtonClicked"/>
 
             <!-- Account aanmaken knop -->
@@ -61,7 +63,8 @@
             x:Name="CreateAccountButton"
             Text="Account aanmaken"
             BackgroundColor="Aquamarine"
-            TextColor="Bisque"
+            TextColor="DarkBlue"
+                FontAttributes="Bold"
             Clicked="OnCreateAccountButtonClicked"/>
 
         </StackLayout>
