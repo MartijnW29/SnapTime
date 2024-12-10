@@ -9,6 +9,7 @@ namespace SnapTime.Classes
     public class User
     {
         public string? Id { get; set; }
+
         public string? Email { get; set; }
 
         public string? Username { get; set; }
@@ -16,6 +17,7 @@ namespace SnapTime.Classes
         public string? Password { get; set; }
 
         public int? Snaplets { get; set; } = 5; 
+
         public int? TotalPicturesTaken { get; set; } = 0;
 
         public TimeOnly? AvailableFrom { get; set; } = new TimeOnly(12, 0);
