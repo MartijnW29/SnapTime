@@ -3,10 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SnapTime.SettingsPage"
              Title="SettingsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="SETTINGS!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+  
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <!-- Vult de resterende ruimte -->
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <VerticalStackLayout Grid.Row="0" VerticalOptions="Start" HorizontalOptions="Center">
+            <Label 
+                Text="SETTINGS!"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" />
+            <Button
+            x:Name="LogoutButton"
+            Text="Log uit" 
+            SemanticProperties.Hint="uitloggen"
+            Clicked="OnLogoutButtonClicked"
+            HorizontalOptions="Fill"
+            VerticalOptions="End"
+            Margin="20"
+            Grid.Row="1"/>
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

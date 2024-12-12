@@ -46,5 +46,9 @@ namespace SnapTime.SQLite
                 .DeleteAsync();
         }
 
+        internal void DeleteUserAsync(object id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
