@@ -18,6 +18,7 @@ namespace SnapTime.Services
             _firebaseClient = new FirebaseClient("https://snaptime-23f71-default-rtdb.europe-west1.firebasedatabase.app/");
         }
 
+
         public async Task UpdateSpecificUser(string userId, User updatedUser)
         {
             if (string.IsNullOrEmpty(userId))

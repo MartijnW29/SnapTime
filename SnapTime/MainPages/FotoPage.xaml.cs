@@ -4,12 +4,16 @@ using SixLabors.ImageSharp.Processing;
 using SnapTime.Services;
 using System.IO;
 using System.Net;
+using Microsoft.Maui.Devices;
+
 
 namespace SnapTime;
 
 public partial class FotoPage : ContentPage
 {
-	public FotoPage()
+    private object SnapletsEarned;
+
+    public FotoPage()
 	{
 		InitializeComponent();
 	}
@@ -34,6 +38,8 @@ public partial class FotoPage : ContentPage
 
                 if (photo != null)
                 {
+                    LoadingOverlay.IsVisible = true;
+
                     var photoPath = Path.Combine(FileSystem.AppDataDirectory, photo.FileName);
 
                     using (var stream = await photo.OpenReadAsync())
@@ -120,22 +126,27 @@ public partial class FotoPage : ContentPage
                         if ((int)response.StatusCode == 200)
                         {
                             App.CurrentUser.Snaplets += 0;
+                            SnapletsEarned = 0;
                         }
                         else if ((int)response.StatusCode == 205)
                         {
                             App.CurrentUser.Snaplets -= 5;
+                            SnapletsEarned = -5;
                         }
                         else if((int)response.StatusCode == 210)
                         {
                             App.CurrentUser.Snaplets += 1;
+                            SnapletsEarned = 1;
                         }
                         else if ((int)response.StatusCode == 220)
                         {
                             App.CurrentUser.Snaplets += 2;
+                            SnapletsEarned = 2;
                         }
                         else if ((int)response.StatusCode == 230)
                         {
                             App.CurrentUser.Snaplets += 3;
+                            SnapletsEarned = 3;
                         }
                         else if ((int)response.StatusCode == 299)
                         {
@@ -152,6 +163,14 @@ public partial class FotoPage : ContentPage
 
                         Console.WriteLine($"Totaal aantal foto's bijgewerkt: {App.CurrentUser.TotalPicturesTaken}");
                         Console.WriteLine($"Totaal aantal Snaplets bijgewerkt: {App.CurrentUser.Snaplets}");
+
+
+                        await ReloadHomePage();
+                        LoadingOverlay.IsVisible = false;
+                        Vibration.Default.Vibrate(500); // 500 miliseconden trillen
+                        await DisplayAlert("Foto is verwerkt", $"Je hebt {SnapletsEarned} Snaplets verdient!", "OK");
+                        
+
                     }
 
                     else
@@ -165,6 +184,27 @@ public partial class FotoPage : ContentPage
         {
             Console.WriteLine($"Er is een fout opgetreden: {ex.Message}");
         }
+    }
+
+    private async Task ReloadHomePage()
+    {
+        // Herlaad de huidige pagina
+        await MainThread.InvokeOnMainThreadAsync(async () =>
+        {
+            var currentPage = Application.Current.MainPage?.Navigation?.NavigationStack.LastOrDefault();
+
+            if (currentPage != null)
+            {
+                // Verwijder de huidige pagina en navigeer opnieuw
+                await Application.Current.MainPage.Navigation.PopAsync(false); // Verwijder de oude pagina
+                await Application.Current.MainPage.Navigation.PushAsync(new MainBar(2), false); // Voeg een nieuwe toe
+            }
+            else
+            {
+                // Als er geen navigatie-stack is, stel gewoon de MainPage in
+                Application.Current.MainPage = new MainBar(2);
+            }
+        });
     }
 
 

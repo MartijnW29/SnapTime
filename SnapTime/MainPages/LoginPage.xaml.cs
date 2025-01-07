@@ -1,14 +1,19 @@
 using SnapTime.Services;
+using SnapTime.SQLite; // nodig voor telefoon database
+
+
 
 namespace SnapTime
 {
     public partial class LoginPage : ContentPage
     {
         private readonly FirebaseHelper _firebaseHelper;
+        SQLiteDatabase localdatabase;
 
         public LoginPage()
         {
             InitializeComponent();
+            localdatabase = new SQLiteDatabase();
             _firebaseHelper = new FirebaseHelper();  // Firebase helper voor database-interactie
         }
 
@@ -43,6 +48,16 @@ namespace SnapTime
 
                 if (userId != null)
                 {
+                    var LoggedInUser = new Classes.LoggedInUser
+                    {
+                        Id = userId,
+                        Email = email,
+                        Username = username,
+                        Password = password
+                    };
+
+                    localdatabase.SaveUserAsync(LoggedInUser);
+
                     var user = await _firebaseHelper.GetUserById(userId);
 
                     if (user != null)
