@@ -4,6 +4,8 @@ using SixLabors.ImageSharp.Processing;
 using SnapTime.Services;
 using System.IO;
 using System.Net;
+using Microsoft.Maui.Devices;
+
 
 namespace SnapTime;
 
@@ -165,7 +167,9 @@ public partial class FotoPage : ContentPage
 
                         await ReloadHomePage();
                         LoadingOverlay.IsVisible = false;
+                        Vibration.Default.Vibrate(500); // 500 miliseconden trillen
                         await DisplayAlert("Foto is verwerkt", $"Je hebt {SnapletsEarned} Snaplets verdient!", "OK");
+                        
 
                     }
 
