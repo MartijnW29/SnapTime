@@ -7,47 +7,65 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <!-- Vult de resterende ruimte -->
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <VerticalStackLayout Grid.Row="0" VerticalOptions="Start" HorizontalOptions="Center">
-            <Label 
-                Text="SETTINGS!"
-                VerticalOptions="Center" 
-                HorizontalOptions="Center" />
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="10">
+                <Label 
+                    Text="SETTINGS!"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center"
+                    FontSize="24" />
 
-            <Label 
-                x:Name="AvailableFromLabel"
-                Text="Beschikbaar Vanaf" 
-                VerticalOptions="Center" 
-                HorizontalOptions="Center"
-                Margin="25"
-                FontSize="20"/>
-            
-            <!-- Placeholder voor de AvailableFrom TimePicker -->
-            <ContentView x:Name="AvailableFromTimePickerContainer" />
+                <Label 
+                    x:Name="AvailableFromLabel"
+                    Text="Beschikbaar Vanaf" 
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center"
+                    Margin="25"
+                    FontSize="20"/>
 
-            <Label 
-                x:Name="AvailableTillLabel"
-                Text="Beschikbaar Tot" 
-                VerticalOptions="Center" 
-                HorizontalOptions="Center"
-                Margin="25"
-                FontSize="20"/>
-            
-            <!-- Placeholder voor de AvailableTill TimePicker -->
-            <ContentView x:Name="AvailableTillTimePickerContainer" />
+                <!-- Placeholder voor de AvailableFrom TimePicker -->
+                <ContentView x:Name="AvailableFromTimePickerContainer" />
 
-            <Button
-                x:Name="LogoutButton"
-                Text="Log uit" 
-                SemanticProperties.Hint="uitloggen"
-                Clicked="OnLogoutButtonClicked"
-                HorizontalOptions="Fill"
-                VerticalOptions="End"
-                Margin="20"
-                Grid.Row="2"/>
-        </VerticalStackLayout>
+                <Label 
+                    x:Name="AvailableTillLabel"
+                    Text="Beschikbaar Tot" 
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center"
+                    Margin="25"
+                    FontSize="20"/>
+
+                <!-- Placeholder voor de AvailableTill TimePicker -->
+                <ContentView x:Name="AvailableTillTimePickerContainer" />
+
+                <Button
+                    Text="Maak een thema"
+                    Clicked="OnCreateThemeButtonClicked"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"/>
+
+                <Label 
+                    Text="Kies je thema's:"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center"
+                    Margin="25"
+                    FontSize="20"/>
+
+                <!-- Container voor dynamische thema Switches -->
+                <StackLayout x:Name="ThemesStackLayout" Padding="10"/>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button
+            x:Name="LogoutButton"
+            Text="Log uit" 
+            SemanticProperties.Hint="uitloggen"
+            Clicked="OnLogoutButtonClicked"
+            HorizontalOptions="Fill"
+            VerticalOptions="End"
+            Margin="20"
+            Grid.Row="1"/>
     </Grid>
 </ContentPage>

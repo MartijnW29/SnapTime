@@ -58,15 +58,101 @@ public partial class SettingsPage : ContentPage
         }
     }
 
-
     private async void OnLogoutButtonClicked(object sender, EventArgs e)
     {
         await localdatabase.DeleteUserAsync(App.CurrentUser.Id);
-
         Application.Current.MainPage = new LoginPage();
     }
 
+    private async void LoadThemes()
+    {
+        var availableThemes = await _firebaseHelper.GetThemes();
+        ThemesStackLayout.Children.Clear();
 
+        foreach (var theme in availableThemes)
+        {
+            var switchControl = new Switch
+            {
+                IsToggled = App.CurrentUser.ChosenThemes?.Any(t => t.Id == theme.Id) ?? false
+            };
+
+            switchControl.Toggled += async (sender, e) =>
+            {
+                if (e.Value)
+                {
+                    App.CurrentUser.ChosenThemes ??= new List<Theme>();
+                    if (!App.CurrentUser.ChosenThemes.Any(t => t.Id == theme.Id))
+                    {
+                        App.CurrentUser.ChosenThemes.Add(theme);
+                    }
+                }
+                else
+                {
+                    App.CurrentUser.ChosenThemes?.Remove(App.CurrentUser.ChosenThemes.FirstOrDefault(t => t.Id == theme.Id));
+                }
+
+                await _firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id, App.CurrentUser);
+            };
+
+            var themeLabel = new Label
+            {
+                Text = theme.Name,
+                VerticalOptions = LayoutOptions.Center
+            };
+
+            var themeLayout = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                Children = { themeLabel, switchControl }
+            };
+
+            ThemesStackLayout.Children.Add(themeLayout);
+        }
+    }
+
+    private async void OnCreateThemeButtonClicked(object sender, EventArgs e)
+    {
+        string themeName = await DisplayPromptAsync("Nieuw Thema", "Voer een naam in voor het nieuwe thema:");
+
+        if (!string.IsNullOrWhiteSpace(themeName))
+        {
+            var newTheme = new Theme { Name = themeName };
+            await _firebaseHelper.AddItem(newTheme, "themes");
+
+            App.CurrentUser.ChosenThemes.Add(newTheme);
+            await _firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id, App.CurrentUser);
+
+            AddThemeToggleButton(newTheme);
+        }
+    }
+
+    private void AddThemeToggleButton(Theme theme)
+    {
+        var themeToggleButton = new Switch
+        {
+            IsToggled = App.CurrentUser.ChosenThemes.Contains(theme),
+            HorizontalOptions = LayoutOptions.Fill
+        };
+
+        themeToggleButton.Toggled += async (sender, e) =>
+        {
+            if (themeToggleButton.IsToggled)
+            {
+                App.CurrentUser.ChosenThemes.Add(theme);
+            }
+            else
+            {
+                App.CurrentUser.ChosenThemes.Remove(theme);
+            }
+            await _firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id, App.CurrentUser);
+        };
+
+        ThemesStackLayout.Children.Add(new StackLayout
+        {
+            Orientation = StackOrientation.Horizontal,
+            Children = { new Label { Text = theme.Name }, themeToggleButton }
+        });
+    }
 
     private async Task ReloadHomePage()
     {
@@ -88,7 +174,4 @@ public partial class SettingsPage : ContentPage
             }
         });
     }
-
-
-
 }

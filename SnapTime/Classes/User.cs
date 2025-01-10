@@ -24,7 +24,7 @@ namespace SnapTime.Classes
 
         public TimeOnly? AvailableTill { get; set; } = new TimeOnly(20, 0);
 
-        public List<Theme>? ChosenThemes { get; set; }
+        public List<Theme>? ChosenThemes { get; set; } = new List<Theme>();
 
         public List<Picture>? Pictures { get; set; }
 

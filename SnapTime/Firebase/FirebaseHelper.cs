@@ -19,6 +19,18 @@ namespace SnapTime.Services
         }
 
 
+        public async Task<List<Theme>> GetThemes()
+        {
+            var themes = await _firebaseClient
+                .Child("themes") // Zorg ervoor dat dit de juiste node is waar je thema's staan opgeslagen
+                .OnceAsync<Theme>();
+
+            return themes.Select(t => t.Object).ToList();
+        }
+
+
+
+
         public async Task UpdateSpecificUser(string userId, User updatedUser)
         {
             if (string.IsNullOrEmpty(userId))
