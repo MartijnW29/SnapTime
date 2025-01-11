@@ -43,11 +43,15 @@ namespace SnapTime.Services
                 throw new ArgumentNullException(nameof(updatedUser), "Updated user mag niet null zijn.");
             }
 
+            // Controleer of ChosenThemes niet null is en zorg ervoor dat het correct wordt opgeslagen
+            updatedUser.ChosenThemes = updatedUser.ChosenThemes ?? new List<Theme>();
+
             await _firebaseClient
-                .Child("users")        // De node waar de gebruikers staan
-                .Child(userId)         // Het unieke ID van de gebruiker
-                .PutAsync(updatedUser); // Vervang de gebruiker met de nieuwe gegevens
+                .Child("users")
+                .Child(userId)
+                .PutAsync(updatedUser);
         }
+
 
         public async Task<User> GetUserById(string userId)
         {

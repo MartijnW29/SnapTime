@@ -58,13 +58,21 @@ public partial class SettingsPage : ContentPage
         }
     }
 
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // Laad de thema's wanneer de pagina verschijnt
+        await LoadThemes();
+    }
+
     private async void OnLogoutButtonClicked(object sender, EventArgs e)
     {
         await localdatabase.DeleteUserAsync(App.CurrentUser.Id);
         Application.Current.MainPage = new LoginPage();
     }
 
-    private async void LoadThemes()
+    private async Task LoadThemes()
     {
         var availableThemes = await _firebaseHelper.GetThemes();
         ThemesStackLayout.Children.Clear();
@@ -73,26 +81,29 @@ public partial class SettingsPage : ContentPage
         {
             var switchControl = new Switch
             {
+                // Zet de juiste status van de switch op basis van de ChosenThemes van de gebruiker
                 IsToggled = App.CurrentUser.ChosenThemes?.Any(t => t.Id == theme.Id) ?? false
             };
 
+            // Event handler voor wanneer de switch wordt veranderd
             switchControl.Toggled += async (sender, e) =>
             {
-                if (e.Value)
+                if (e.Value) // Als de switch aan gaat
                 {
-                    App.CurrentUser.ChosenThemes ??= new List<Theme>();
                     if (!App.CurrentUser.ChosenThemes.Any(t => t.Id == theme.Id))
                     {
                         App.CurrentUser.ChosenThemes.Add(theme);
                     }
                 }
-                else
+                else // Als de switch uit gaat
                 {
-                    App.CurrentUser.ChosenThemes?.Remove(App.CurrentUser.ChosenThemes.FirstOrDefault(t => t.Id == theme.Id));
+                    App.CurrentUser.ChosenThemes.RemoveAll(t => t.Id == theme.Id);
                 }
 
+                // Zorg ervoor dat de hele lijst wordt opgeslagen
                 await _firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id, App.CurrentUser);
             };
+
 
             var themeLabel = new Label
             {
@@ -110,19 +121,34 @@ public partial class SettingsPage : ContentPage
         }
     }
 
+
     private async void OnCreateThemeButtonClicked(object sender, EventArgs e)
     {
         string themeName = await DisplayPromptAsync("Nieuw Thema", "Voer een naam in voor het nieuwe thema:");
 
         if (!string.IsNullOrWhiteSpace(themeName))
         {
-            var newTheme = new Theme { Name = themeName };
-            await _firebaseHelper.AddItem(newTheme, "themes");
+            // Haal de lijst van thema's op
+            var existingThemes = await _firebaseHelper.GetThemes();
 
-            App.CurrentUser.ChosenThemes.Add(newTheme);
-            await _firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id, App.CurrentUser);
+            // Controleer of het thema al bestaat
+            if (existingThemes.Any(t => t.Name.Equals(themeName, StringComparison.OrdinalIgnoreCase)))
+            {
+                await DisplayAlert("Fout", "Er bestaat al een thema met deze naam.", "OK");
+            }
+            else
+            {
+                // Maak het nieuwe thema aan
+                var newTheme = new Theme { Name = themeName };
+                await _firebaseHelper.AddItem(newTheme, "themes");
 
-            AddThemeToggleButton(newTheme);
+                // Voeg het nieuwe thema toe aan de huidige gebruiker
+                App.CurrentUser.ChosenThemes.Add(newTheme);
+                await _firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id, App.CurrentUser);
+
+                // Voeg de knop voor het nieuwe thema toe
+                AddThemeToggleButton(newTheme);
+            }
         }
     }
 
