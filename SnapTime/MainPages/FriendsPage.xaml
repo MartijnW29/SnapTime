@@ -7,7 +7,7 @@
         <Label Text="Vrienden!" FontSize="24" VerticalOptions="Start" HorizontalOptions="Center" />
 
         <!-- Zoekbalk voor vrienden -->
-        <SearchBar x:Name="SearchBar" Placeholder="Zoek vrienden" SearchButtonPressed="OnSearchButtonPressed" HorizontalOptions="FillAndExpand" />
+        
 
         <!-- Lijst van gebruikers voor zoeken -->
         <Label Text="Zoek Gebruikers" FontSize="18" />
@@ -24,6 +24,8 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
+        <SearchBar x:Name="SearchBar" Placeholder="Gebruikersnaam" SearchButtonPressed="OnSearchButtonPressed" HorizontalOptions="FillAndExpand" />
+        
         <!-- Lijst van vrienden -->
         <Label Text="Mijn Vrienden" FontSize="18" />
         <CollectionView x:Name="FriendsListView" ItemsSource="{Binding FriendsList}">

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SnapTime.Classes
@@ -28,6 +29,7 @@ namespace SnapTime.Classes
 
         public List<Picture>? Pictures { get; set; }
 
+        [JsonIgnore] // is nodig om vriend verzoekken te accepteren
         public List<User>? friends { get; set; }
 
         public List<Race>? Races { get; set; }

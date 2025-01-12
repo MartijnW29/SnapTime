@@ -21,22 +21,37 @@ namespace SnapTime
             _friends = new List<User>();
             _incomingRequests = new List<FriendRequest>();
             _searchedUsers = new List<User>();
-
+            BindingContext = this;
             LoadFriendsAndRequests();
         }
 
         private async void LoadFriendsAndRequests()
         {
-            var currentUser = await _firebaseHelper.GetUserById("currentUserId"); // Zorg ervoor dat je de juiste ID gebruikt
+            var currentUser = await _firebaseHelper.GetUserById("currentUserId");
 
-            // Laad de vriendenlijst
-            _friends = currentUser?.friends ?? new List<User>();
-            FriendsListView.ItemsSource = _friends;
-
-            // Laad de inkomende vriendverzoeken
-            _incomingRequests = await _firebaseHelper.GetFriendRequestsForUser(currentUser?.Id);
-            IncomingRequestsListView.ItemsSource = _incomingRequests;
+            try
+            {
+                _incomingRequests = await _firebaseHelper.GetFriendRequestsForUser(App.CurrentUser.Id);
+                if (_incomingRequests == null || !_incomingRequests.Any())
+                {
+                    await DisplayAlert("Info", "Geen inkomende vriendverzoeken gevonden.", "OK");
+                }
+                else
+                {
+                    foreach (var request in _incomingRequests)
+                    {
+                        Console.WriteLine($"Verzoek van: {request.Sender.Username} aan {request.Receiver.Username}");
+                    }
+                }
+                IncomingRequestsListView.ItemsSource = _incomingRequests;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Fout", $"Fout bij het ophalen van vriendverzoeken: {ex.Message}", "OK");
+            }
         }
+
+
 
         // Methode voor het accepteren van een inkomend vriendverzoek
         private async void AcceptFriendRequest(object sender, EventArgs e)
@@ -44,34 +59,60 @@ namespace SnapTime
             var button = (Button)sender;
             var requestId = button.CommandParameter?.ToString(); // Haal het friend request ID op
 
-            if (string.IsNullOrEmpty(requestId)) return;
+            if (string.IsNullOrEmpty(requestId))
+            {
+                await DisplayAlert("Fout", "Verzoek ID is ongeldig.", "OK");
+                return;
+            }
 
-            // Haal het vriendverzoek op uit Firebase
-            var request = _incomingRequests.FirstOrDefault(fr => fr.Id == requestId);
-            if (request == null) return;
+            // Gebruik try-catch voor foutafhandeling
+            try
+            {
+                // Haal het vriendverzoek op uit de lijst
+                var request = _incomingRequests.FirstOrDefault(fr => fr.Id == requestId);
+                if (request == null)
+                {
+                    await DisplayAlert("Fout", "Vriendverzoek niet gevonden.", "OK");
+                    return;
+                }
 
-            // Markeer het verzoek als geaccepteerd
-            request.Accepted = true;
-            await _firebaseHelper.UpdateFriendRequest(request.Id, request);
+                // Markeer het verzoek als geaccepteerd
+                request.Accepted = true;
+                await _firebaseHelper.UpdateFriendRequest(request.Id, request);
 
-            // Voeg de gebruikers toe aan elkaar vriendenlijsten
-            var senderUser = request.Sender;
-            var receiverUser = request.Receiver;
+                // Controleer of de gebruikers bestaan voordat ze worden toegevoegd
+                var senderUser = request.Sender;
+                var receiverUser = request.Receiver;
 
-            // Voeg elkaar toe aan de lijst van vrienden
-            senderUser?.friends.Add(receiverUser);
-            receiverUser?.friends.Add(senderUser);
+                if (senderUser == null || receiverUser == null)
+                {
+                    await DisplayAlert("Fout", "Gebruiker(s) niet gevonden.", "OK");
+                    return;
+                }
 
-            // Update de gebruikers in Firebase
-            await _firebaseHelper.UpdateSpecificUser(senderUser.Id, senderUser);
-            await _firebaseHelper.UpdateSpecificUser(receiverUser.Id, receiverUser);
+                // Voeg elkaar toe aan de lijst van vrienden
+                senderUser.friends = senderUser.friends ?? new List<User>();
+                receiverUser.friends = receiverUser.friends ?? new List<User>();
+                senderUser.friends.Add(receiverUser);
+                receiverUser.friends.Add(senderUser);
 
-            // Verwijder het vriendverzoek (optioneel)
-            await _firebaseHelper.DeleteItem("friendRequests", request.Id);
+                // Update de gebruikers in Firebase
+                await _firebaseHelper.UpdateSpecificUser(senderUser.Id, senderUser);
+                await _firebaseHelper.UpdateSpecificUser(receiverUser.Id, receiverUser);
 
-            // Herlaad de vriendenlijst en inkomende verzoeken
-            LoadFriendsAndRequests();
+                // Verwijder het vriendverzoek (optioneel)
+                await _firebaseHelper.DeleteItem("friendRequests", request.Id);
+
+                // Herlaad de vriendenlijst en inkomende verzoeken
+                LoadFriendsAndRequests();
+            }
+            catch (Exception ex)
+            {
+                // Toon een foutmelding bij een uitzondering
+                await DisplayAlert("Fout", $"Er is een fout opgetreden: {ex.Message}", "OK");
+            }
         }
+
 
         // Zoekfunctie voor vrienden
         private async void OnSearchButtonPressed(object sender, EventArgs e)
