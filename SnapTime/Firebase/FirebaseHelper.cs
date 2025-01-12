@@ -165,6 +165,20 @@ namespace SnapTime.Services
                 .DeleteAsync();
         }
 
+        public async Task<FriendRequest> GetExistingFriendRequest(string senderId, string receiverId)
+        {
+            var friendRequests = await _firebaseClient
+                .Child("friendRequests")
+                .OnceAsync<FriendRequest>();
+
+            // Zoek naar een vriendverzoek waar de zender en ontvanger overeenkomen en het verzoek niet geaccepteerd is
+            return friendRequests
+                .Select(fr => fr.Object)
+                .FirstOrDefault(fr => fr.SenderId == senderId && fr.ReceiverId == receiverId && !fr.Accepted);
+        }
+
+
+
         // Voeg een vriendverzoek toe
         public async Task AddFriendRequest(FriendRequest request)
         {

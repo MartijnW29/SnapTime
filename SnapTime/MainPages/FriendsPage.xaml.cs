@@ -61,11 +61,21 @@ namespace SnapTime
 
             if (receiverId == null) return;
 
-            // Haal de huidige gebruiker op uit Firebase (je moet de juiste ID gebruiken)
+            // Haal de huidige gebruiker op uit Firebase
             var currentUser = await _firebaseHelper.GetUserById("currentUserId"); // Zorg ervoor dat je de juiste ID gebruikt
 
             var receiver = _searchedUsers.FirstOrDefault(u => u.Id == receiverId);
             if (receiver == null) return;
+
+            // Controleer of er al een vriendverzoek bestaat tussen de twee gebruikers
+            var existingRequest = await _firebaseHelper.GetExistingFriendRequest(currentUser?.Id, receiver.Id);
+
+            if (existingRequest != null)
+            {
+                // Je kunt hier eventueel een melding geven aan de gebruiker dat het verzoek al bestaat
+                await DisplayAlert("Vriendverzoek", "Je hebt al een vriendverzoek naar deze gebruiker gestuurd.", "OK");
+                return;
+            }
 
             // Maak een nieuw vriendverzoek
             var friendRequest = new FriendRequest
@@ -82,6 +92,9 @@ namespace SnapTime
             await _firebaseHelper.AddItem(friendRequest, "friendRequests");
 
             // Optioneel: je kunt de gebruiker hier een melding sturen dat het verzoek is verstuurd
+            await DisplayAlert("Vriendverzoek", "Het vriendverzoek is succesvol verstuurd.", "OK");
         }
+
+
     }
 }
