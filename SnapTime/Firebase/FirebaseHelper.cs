@@ -19,6 +19,45 @@ namespace SnapTime.Services
         }
 
 
+        // Voeg een nieuwe race toe
+        public async Task AddRace(Race race)
+        {
+            await _firebaseClient
+                .Child("races")
+                .PostAsync(race);
+        }
+
+        // Haal alle races op
+        public async Task<List<Race>> GetRaces()
+        {
+            var races = await _firebaseClient
+                .Child("races")
+                .OnceAsync<Race>();
+
+            return races.Select(r => r.Object).ToList();
+        }
+
+        // Update een race
+        public async Task UpdateRace(string raceId, Race race)
+        {
+            await _firebaseClient
+                .Child("races")
+                .Child(raceId)
+                .PutAsync(race);
+        }
+
+        // Verwijder een race
+        public async Task DeleteRace(string raceId)
+        {
+            await _firebaseClient
+                .Child("races")
+                .Child(raceId)
+                .DeleteAsync();
+        }
+
+
+
+
         public async Task<List<Theme>> GetThemes()
         {
             var themes = await _firebaseClient
