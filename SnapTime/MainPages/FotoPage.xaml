@@ -27,12 +27,14 @@
             <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
                 <!-- Label voor status -->
                 <Label 
-                    Text="Wacht even, je foto wordt verwerkt..." 
-                    FontSize="Medium" 
+                    Text="Wacht even, je foto wordt verwerkt..."  
+                    FontSize="Large" 
                     HorizontalOptions="Center" 
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center" 
+                    Margin="0,100,0,0" 
+                    TextColor="AntiqueWhite" />
 
-                <!-- ActivityIndicator als GIF -->
+                    <!-- ActivityIndicator als GIF -->
                 <ActivityIndicator 
                     IsRunning="True" 
                     Color="Aqua"
