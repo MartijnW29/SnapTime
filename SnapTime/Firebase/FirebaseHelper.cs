@@ -18,7 +18,6 @@ namespace SnapTime.Services
             _firebaseClient = new FirebaseClient("https://snaptime-23f71-default-rtdb.europe-west1.firebasedatabase.app/");
         }
 
-
         // Voeg een nieuwe race toe
         public async Task AddRace(Race race)
         {
@@ -55,9 +54,6 @@ namespace SnapTime.Services
                 .DeleteAsync();
         }
 
-
-
-
         public async Task<List<Theme>> GetThemes()
         {
             var themes = await _firebaseClient
@@ -66,9 +62,6 @@ namespace SnapTime.Services
 
             return themes.Select(t => t.Object).ToList();
         }
-
-
-
 
         public async Task UpdateSpecificUser(string userId, User updatedUser)
         {
@@ -91,7 +84,6 @@ namespace SnapTime.Services
                 .PutAsync(updatedUser);
         }
 
-
         public async Task<User> GetUserById(string userId)
         {
             var users = await _firebaseClient
@@ -101,7 +93,6 @@ namespace SnapTime.Services
             var user = users.FirstOrDefault(u => u.Object.Id == userId)?.Object;
             return user;
         }
-
 
         public async Task<string> CheckUserExistence(string email, string Username, string password)
         {
@@ -138,9 +129,6 @@ namespace SnapTime.Services
                 .PutAsync(user);
         }
 
-
-
-
         // Voeg data toe
         public async Task AddItem<T>(T item, string node)
         {
@@ -175,6 +163,47 @@ namespace SnapTime.Services
                 .Child(node)
                 .Child(key)
                 .DeleteAsync();
+        }
+
+        // Voeg een vriendverzoek toe
+        public async Task AddFriendRequest(FriendRequest request)
+        {
+            await _firebaseClient
+                .Child("friendRequests")
+                .PostAsync(request);
+        }
+
+        // Haal alle vriendverzoeken op voor een gebruiker
+        public async Task<List<FriendRequest>> GetFriendRequestsForUser(string userId)
+        {
+            var friendRequests = await _firebaseClient
+                .Child("friendRequests")
+                .OnceAsync<FriendRequest>();
+
+            return friendRequests
+                .Select(fr => fr.Object)
+                .Where(fr => fr.ReceiverId == userId && !fr.Accepted)
+                .ToList();
+        }
+
+        // Update een vriendverzoek (bijvoorbeeld bij acceptatie)
+        public async Task UpdateFriendRequest(string requestId, FriendRequest updatedRequest)
+        {
+            await _firebaseClient
+                .Child("friendRequests")
+                .Child(requestId)
+                .PutAsync(updatedRequest);
+        }
+
+        // Haal een gebruiker op met behulp van de gebruikersnaam
+        public async Task<User> GetUserByUsername(string username)
+        {
+            var users = await _firebaseClient
+                .Child("users")
+                .OnceAsync<User>();
+
+            return users.Select(u => u.Object)
+                        .FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

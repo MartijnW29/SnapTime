@@ -45,7 +45,7 @@ namespace SnapTime
             // Refresh the race list
             LoadRaces();
 
-            // Clear input fields
+            // Leeg input fields
             RaceTypeEntry.Text = string.Empty;
             BetEntry.Text = string.Empty;
             RandomThemesSwitch.IsToggled = false;

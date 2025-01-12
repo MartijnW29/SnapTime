@@ -3,10 +3,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SnapTime.FriendsPage"
              Title="FriendsPage">
-    <VerticalStackLayout>
+
+    <VerticalStackLayout Padding="20">
         <Label 
-            Text="FRIENDS!"
-            VerticalOptions="Center" 
+            Text="Vrienden!"
+            FontSize="24"
+            VerticalOptions="Start" 
             HorizontalOptions="Center" />
+
+        <!-- Zoekbalk voor vrienden -->
+        <SearchBar x:Name="SearchBar" 
+                   Placeholder="Zoek vrienden" 
+                   SearchButtonPressed="OnSearchButtonPressed" 
+                   HorizontalOptions="FillAndExpand" />
+
+        <!-- Lijst van gebruikers -->
+        <CollectionView x:Name="UsersListView" 
+                ItemsSource="{Binding SearchedUsers}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="5" BorderColor="LightGray" CornerRadius="10">
+                        <StackLayout>
+                            <Label Text="{Binding Username}" FontSize="20" FontAttributes="Bold" />
+                            <!-- De knop die de event handler aanroept -->
+                            <Button Text="Voeg toe als vriend" 
+                            Clicked="AddFriendClicked" 
+                            CommandParameter="{Binding Id}" 
+                            HorizontalOptions="End" />
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
     </VerticalStackLayout>
 </ContentPage>
