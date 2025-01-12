@@ -58,15 +58,127 @@ public partial class SettingsPage : ContentPage
         }
     }
 
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // Laad de thema's wanneer de pagina verschijnt
+        await LoadThemes();
+    }
 
     private async void OnLogoutButtonClicked(object sender, EventArgs e)
     {
         await localdatabase.DeleteUserAsync(App.CurrentUser.Id);
-
         Application.Current.MainPage = new LoginPage();
     }
 
+    private async Task LoadThemes()
+    {
+        var availableThemes = await _firebaseHelper.GetThemes();
+        ThemesStackLayout.Children.Clear();
 
+        foreach (var theme in availableThemes)
+        {
+            var switchControl = new Switch
+            {
+                // Zet de juiste status van de switch op basis van de ChosenThemes van de gebruiker
+                IsToggled = App.CurrentUser.ChosenThemes?.Any(t => t.Id == theme.Id) ?? false
+            };
+
+            // Event handler voor wanneer de switch wordt veranderd
+            switchControl.Toggled += async (sender, e) =>
+            {
+                if (e.Value) // Als de switch aan gaat
+                {
+                    if (!App.CurrentUser.ChosenThemes.Any(t => t.Id == theme.Id))
+                    {
+                        App.CurrentUser.ChosenThemes.Add(theme);
+                    }
+                }
+                else // Als de switch uit gaat
+                {
+                    App.CurrentUser.ChosenThemes.RemoveAll(t => t.Id == theme.Id);
+                }
+
+                // Zorg ervoor dat de hele lijst wordt opgeslagen
+                await _firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id, App.CurrentUser);
+            };
+
+
+            var themeLabel = new Label
+            {
+                Text = theme.Name,
+                VerticalOptions = LayoutOptions.Center
+            };
+
+            var themeLayout = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                Children = { themeLabel, switchControl }
+            };
+
+            ThemesStackLayout.Children.Add(themeLayout);
+        }
+    }
+
+
+    private async void OnCreateThemeButtonClicked(object sender, EventArgs e)
+    {
+        string themeName = await DisplayPromptAsync("Nieuw Thema", "Voer een naam in voor het nieuwe thema:");
+
+        if (!string.IsNullOrWhiteSpace(themeName))
+        {
+            // Haal de lijst van thema's op
+            var existingThemes = await _firebaseHelper.GetThemes();
+
+            // Controleer of het thema al bestaat
+            if (existingThemes.Any(t => t.Name.Equals(themeName, StringComparison.OrdinalIgnoreCase)))
+            {
+                await DisplayAlert("Fout", "Er bestaat al een thema met deze naam.", "OK");
+            }
+            else
+            {
+                // Maak het nieuwe thema aan
+                var newTheme = new Theme { Name = themeName };
+                await _firebaseHelper.AddItem(newTheme, "themes");
+
+                // Voeg het nieuwe thema toe aan de huidige gebruiker
+                App.CurrentUser.ChosenThemes.Add(newTheme);
+                await _firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id, App.CurrentUser);
+
+                // Voeg de knop voor het nieuwe thema toe
+                AddThemeToggleButton(newTheme);
+            }
+        }
+    }
+
+    private void AddThemeToggleButton(Theme theme)
+    {
+        var themeToggleButton = new Switch
+        {
+            IsToggled = App.CurrentUser.ChosenThemes.Contains(theme),
+            HorizontalOptions = LayoutOptions.Fill
+        };
+
+        themeToggleButton.Toggled += async (sender, e) =>
+        {
+            if (themeToggleButton.IsToggled)
+            {
+                App.CurrentUser.ChosenThemes.Add(theme);
+            }
+            else
+            {
+                App.CurrentUser.ChosenThemes.Remove(theme);
+            }
+            await _firebaseHelper.UpdateSpecificUser(App.CurrentUser.Id, App.CurrentUser);
+        };
+
+        ThemesStackLayout.Children.Add(new StackLayout
+        {
+            Orientation = StackOrientation.Horizontal,
+            Children = { new Label { Text = theme.Name }, themeToggleButton }
+        });
+    }
 
     private async Task ReloadHomePage()
     {
@@ -88,7 +200,4 @@ public partial class SettingsPage : ContentPage
             }
         });
     }
-
-
-
 }

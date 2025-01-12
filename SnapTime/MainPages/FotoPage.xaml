@@ -13,14 +13,8 @@
             <!-- Voor de knop -->
         </Grid.RowDefinitions>
 
-        <!-- Label of andere inhoud in de bovenste rij -->
-        <VerticalStackLayout Grid.Row="0" VerticalOptions="Start" HorizontalOptions="Center">
-            <Label 
-                Text="FOTO!"
-                VerticalOptions="Center" 
-                HorizontalOptions="Center" />
-        </VerticalStackLayout>
-
+        <!-- Achtergrondafbeelding -->
+        <Image Source="cameraonfloor.jpg" Aspect="AspectFill" Grid.RowSpan="2" />
 
         <!-- Overlay voor laadindicator -->
         <Grid Grid.RowSpan="2" BackgroundColor="Transparent" IsVisible="False" x:Name="LoadingOverlay">
@@ -43,8 +37,6 @@
             </VerticalStackLayout>
         </Grid>
 
-
-
         <!-- Knop helemaal onderaan -->
         <Button
             x:Name="PictureButton"
@@ -57,3 +49,5 @@
             Grid.Row="1"/>
     </Grid>
 </ContentPage>
+
+    

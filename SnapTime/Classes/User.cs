@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SnapTime.Classes
@@ -24,10 +25,11 @@ namespace SnapTime.Classes
 
         public TimeOnly? AvailableTill { get; set; } = new TimeOnly(20, 0);
 
-        public List<Theme>? ChosenThemes { get; set; }
+        public List<Theme>? ChosenThemes { get; set; } = new List<Theme>();
 
         public List<Picture>? Pictures { get; set; }
 
+        [JsonIgnore] // is nodig om vriend verzoekken te accepteren
         public List<User>? friends { get; set; }
 
         public List<Race>? Races { get; set; }

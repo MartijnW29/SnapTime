@@ -1,12 +1,58 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SnapTime.FriendsPage"
              Title="FriendsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="FRIENDS!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+
+    <VerticalStackLayout Padding="20">
+        <Label Text="Vrienden!" FontSize="24" VerticalOptions="Start" HorizontalOptions="Center" />
+
+        <!-- Zoekbalk voor vrienden -->
+        
+
+        <!-- Lijst van gebruikers voor zoeken -->
+        <Label Text="Zoek Gebruikers" FontSize="18" />
+        <CollectionView x:Name="UsersListView" ItemsSource="{Binding SearchedUsers}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="5" BorderColor="LightGray" CornerRadius="10">
+                        <StackLayout>
+                            <Label Text="{Binding Username}" FontSize="20" FontAttributes="Bold" />
+                            <Button Text="Voeg toe als vriend" Clicked="AddFriendClicked" CommandParameter="{Binding Id}" HorizontalOptions="End" />
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <SearchBar x:Name="SearchBar" Placeholder="Gebruikersnaam" SearchButtonPressed="OnSearchButtonPressed" HorizontalOptions="FillAndExpand" />
+        
+        <!-- Lijst van vrienden -->
+        <Label Text="Mijn Vrienden" FontSize="18" />
+        <CollectionView x:Name="FriendsListView" ItemsSource="{Binding FriendsList}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="5" BorderColor="LightGray" CornerRadius="10">
+                        <StackLayout>
+                            <Label Text="{Binding Username}" FontSize="20" FontAttributes="Bold" />
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Lijst van inkomende vriendverzoeken -->
+        <Label Text="Inkomende Vriendverzoeken" FontSize="18" />
+        <CollectionView x:Name="IncomingRequestsListView" ItemsSource="{Binding IncomingRequests}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="5" BorderColor="LightGray" CornerRadius="10">
+                        <StackLayout>
+                            <Label Text="{Binding Sender.Username}" FontSize="20" FontAttributes="Bold" />
+                            <Button Text="Accepteer" Clicked="AcceptFriendRequest" CommandParameter="{Binding Id}" />
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </VerticalStackLayout>
 </ContentPage>
