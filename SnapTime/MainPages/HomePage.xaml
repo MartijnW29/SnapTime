@@ -4,7 +4,14 @@
              x:Class="SnapTime.HomePage"
              Title="HomePage">
     <VerticalStackLayout>
-
+        <!-- Toegevoegde Label voor begroeting -->
+        <Label 
+            x:Name="GreetingLabel"
+            Text="Hallo: ???" 
+            VerticalOptions="Start" 
+            HorizontalOptions="Center"
+            Margin="25"
+            FontSize="20"/>
 
         <Label 
             x:Name="SnapletsLabel"
@@ -19,7 +26,5 @@
             Text="Total Pictures Taken: ???" 
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
-
-
     </VerticalStackLayout>
 </ContentPage>
