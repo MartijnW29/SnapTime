@@ -10,70 +10,128 @@ namespace SnapTime
     public partial class FriendsPage : ContentPage
     {
         private readonly FirebaseHelper _firebaseHelper;
-        private List<User> _users;
+        private List<User> _friends;
+        private List<FriendRequest> _incomingRequests;
         private List<User> _searchedUsers;
 
         public FriendsPage()
         {
             InitializeComponent();
             _firebaseHelper = new FirebaseHelper();
-            _users = new List<User>();
+            _friends = new List<User>();
+            _incomingRequests = new List<FriendRequest>();
             _searchedUsers = new List<User>();
 
-            // Laad de lijst van gebruikers (in dit geval andere gebruikers die mogelijk vrienden kunnen worden)
-            LoadUsers();
+            LoadFriendsAndRequests();
         }
 
-        private async void LoadUsers()
+        private async void LoadFriendsAndRequests()
         {
-            // Haal alle gebruikers op uit Firebase
-            var users = await _firebaseHelper.GetItems<User>("users");
-            _users = users;
+            var currentUser = await _firebaseHelper.GetUserById("currentUserId"); // Zorg ervoor dat je de juiste ID gebruikt
 
-            // Stuur de gebruikers naar de CollectionView
-            UsersListView.ItemsSource = _searchedUsers;
+            // Laad de vriendenlijst
+            _friends = currentUser?.friends ?? new List<User>();
+            FriendsListView.ItemsSource = _friends;
+
+            // Laad de inkomende vriendverzoeken
+            _incomingRequests = await _firebaseHelper.GetFriendRequestsForUser(currentUser?.Id);
+            IncomingRequestsListView.ItemsSource = _incomingRequests;
         }
 
+        // Methode voor het accepteren van een inkomend vriendverzoek
+        private async void AcceptFriendRequest(object sender, EventArgs e)
+        {
+            var button = (Button)sender;
+            var requestId = button.CommandParameter?.ToString(); // Haal het friend request ID op
+
+            if (string.IsNullOrEmpty(requestId)) return;
+
+            // Haal het vriendverzoek op uit Firebase
+            var request = _incomingRequests.FirstOrDefault(fr => fr.Id == requestId);
+            if (request == null) return;
+
+            // Markeer het verzoek als geaccepteerd
+            request.Accepted = true;
+            await _firebaseHelper.UpdateFriendRequest(request.Id, request);
+
+            // Voeg de gebruikers toe aan elkaar vriendenlijsten
+            var senderUser = request.Sender;
+            var receiverUser = request.Receiver;
+
+            // Voeg elkaar toe aan de lijst van vrienden
+            senderUser?.friends.Add(receiverUser);
+            receiverUser?.friends.Add(senderUser);
+
+            // Update de gebruikers in Firebase
+            await _firebaseHelper.UpdateSpecificUser(senderUser.Id, senderUser);
+            await _firebaseHelper.UpdateSpecificUser(receiverUser.Id, receiverUser);
+
+            // Verwijder het vriendverzoek (optioneel)
+            await _firebaseHelper.DeleteItem("friendRequests", request.Id);
+
+            // Herlaad de vriendenlijst en inkomende verzoeken
+            LoadFriendsAndRequests();
+        }
+
+        // Zoekfunctie voor vrienden
         private async void OnSearchButtonPressed(object sender, EventArgs e)
         {
             var searchQuery = SearchBar.Text?.ToLower();
 
             if (string.IsNullOrEmpty(searchQuery))
             {
-                _searchedUsers = _users;
+                // Haal alle gebruikers op
+                var allUsers = await _firebaseHelper.GetItems<User>("users");
+                _searchedUsers = allUsers.Where(u => u.Username?.ToLower().Contains(searchQuery) ?? false).ToList();
             }
             else
             {
-                _searchedUsers = _users
-                    .Where(u => u.Username?.ToLower().Contains(searchQuery) ?? false)
-                    .ToList();
+                // Zoek gebruikers die de query bevatten
+                var allUsers = await _firebaseHelper.GetItems<User>("users");
+                _searchedUsers = allUsers.Where(u => u.Username?.ToLower().Contains(searchQuery) ?? false).ToList();
             }
 
-            // Verander de ItemsSource naar de gefilterde lijst
+            // Update de CollectionView met de zoekresultaten
             UsersListView.ItemsSource = _searchedUsers;
         }
 
-        // De method om een vriend toe te voegen
         private async void AddFriendClicked(object sender, EventArgs e)
         {
             var button = (Button)sender;
-            var receiverId = button.CommandParameter?.ToString(); // Haal het userId van de knopparameter op
+            var userId = button.CommandParameter?.ToString();
 
-            if (receiverId == null) return;
-
-            // Haal de huidige gebruiker op uit Firebase
-            var currentUser = await _firebaseHelper.GetUserById("currentUserId"); // Zorg ervoor dat je de juiste ID gebruikt
-
-            var receiver = _searchedUsers.FirstOrDefault(u => u.Id == receiverId);
-            if (receiver == null) return;
-
-            // Controleer of er al een vriendverzoek bestaat tussen de twee gebruikers
-            var existingRequest = await _firebaseHelper.GetExistingFriendRequest(currentUser?.Id, receiver.Id);
-
-            if (existingRequest != null)
+            if (userId == null)
             {
-                // Je kunt hier eventueel een melding geven aan de gebruiker dat het verzoek al bestaat
-                await DisplayAlert("Vriendverzoek", "Je hebt al een vriendverzoek naar deze gebruiker gestuurd.", "OK");
+                await DisplayAlert("Fout", "Gebruiker ID is ongeldig.", "OK");
+                return;
+            }
+
+            // Haal de huidige gebruiker op (zorg ervoor dat je de juiste ID gebruikt)
+            var currentUser = await _firebaseHelper.GetUserById(App.CurrentUser.Id);
+
+            if (currentUser == null)
+            {
+                await DisplayAlert("Fout", "Kan huidige gebruiker niet ophalen.", "OK");
+                return;
+            }
+
+            // Haal de gebruiker van de knop op
+            var userToAdd = _searchedUsers.FirstOrDefault(u => u.Id == userId);
+            if (userToAdd == null)
+            {
+                await DisplayAlert("Fout", "Gebruiker niet gevonden.", "OK");
+                return;
+            }
+
+            // Controleer of er al een verzoek bestaat
+            var existingRequest = await _firebaseHelper.GetFriendRequestsForUser(currentUser.Id);
+            var existingRequestToUser = existingRequest.FirstOrDefault(fr => fr.ReceiverId == userToAdd.Id && !fr.Accepted);
+            var existingRequestFromUser = existingRequest.FirstOrDefault(fr => fr.SenderId == userToAdd.Id && !fr.Accepted);
+
+            if (existingRequestToUser != null || existingRequestFromUser != null)
+            {
+                // Er bestaat al een openstaand verzoek, dus voorkom het versturen
+                await DisplayAlert("Fout", "Je hebt al een openstaand verzoek met deze gebruiker.", "OK");
                 return;
             }
 
@@ -84,17 +142,19 @@ namespace SnapTime
                 Accepted = false,
                 SenderId = currentUser?.Id,
                 Sender = currentUser,
-                ReceiverId = receiver.Id,
-                Receiver = receiver
+                ReceiverId = userToAdd.Id,
+                Receiver = userToAdd
             };
 
             // Voeg het vriendverzoek toe aan Firebase
-            await _firebaseHelper.AddItem(friendRequest, "friendRequests");
+            await _firebaseHelper.AddFriendRequest(friendRequest);
 
-            // Optioneel: je kunt de gebruiker hier een melding sturen dat het verzoek is verstuurd
-            await DisplayAlert("Vriendverzoek", "Het vriendverzoek is succesvol verstuurd.", "OK");
+            // Optioneel: stuur de gebruiker een melding dat het verzoek is verstuurd
+            await DisplayAlert("Verzoek verstuurd", $"Vriendverzoek naar {userToAdd.Username} is verstuurd.", "OK");
+
+            // Herlaad de zoekresultaten (optioneel)
+            OnSearchButtonPressed(sender, e);
         }
-
 
     }
 }
