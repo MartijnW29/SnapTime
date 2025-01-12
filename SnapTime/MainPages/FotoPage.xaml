@@ -5,6 +5,9 @@
              Title="FotoPage">
 
     <Grid>
+        <!-- Achtergrondafbeelding -->
+        <Image Source="cameraonfloor.jpg" Aspect="AspectFill" Grid.RowSpan="2" />
+
         <!-- Voeg twee rijen toe: één voor de inhoud en één voor de knop -->
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -12,15 +15,6 @@
             <RowDefinition Height="Auto" />
             <!-- Voor de knop -->
         </Grid.RowDefinitions>
-
-        <!-- Label of andere inhoud in de bovenste rij -->
-        <VerticalStackLayout Grid.Row="0" VerticalOptions="Start" HorizontalOptions="Center">
-            <Label 
-                Text="FOTO!"
-                VerticalOptions="Center" 
-                HorizontalOptions="Center" />
-        </VerticalStackLayout>
-
 
         <!-- Overlay voor laadindicator -->
         <Grid Grid.RowSpan="2" BackgroundColor="Transparent" IsVisible="False" x:Name="LoadingOverlay">
@@ -42,8 +36,6 @@
                     HorizontalOptions="Center" />
             </VerticalStackLayout>
         </Grid>
-
-
 
         <!-- Knop helemaal onderaan -->
         <Button
