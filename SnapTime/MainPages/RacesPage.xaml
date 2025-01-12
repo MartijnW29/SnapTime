@@ -3,10 +3,52 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SnapTime.RacesPage"
              Title="RacesPage">
-    <VerticalStackLayout>
+
+    <VerticalStackLayout Padding="20">
         <Label 
             Text="RACES!"
-            VerticalOptions="Center" 
+            FontSize="24"
+            VerticalOptions="Start" 
             HorizontalOptions="Center" />
+
+        <Entry x:Name="RaceTypeEntry" Placeholder="Type race" />
+        <Entry x:Name="BetEntry" Placeholder="Inzet (getal)" Keyboard="Numeric" />
+
+        <!-- Betere lay-out voor toggle -->
+        <HorizontalStackLayout VerticalOptions="Center" Spacing="10">
+            <Label Text="Willekeurige thema's" VerticalOptions="Center" />
+            <Switch x:Name="RandomThemesSwitch" IsToggled="False" />
+        </HorizontalStackLayout>
+
+        <!-- Datum en tijd voor de start -->
+        <Label Text="Startdatum" />
+        <DatePicker x:Name="StartDatePicker" />
+        <TimePicker x:Name="StartTimePicker" />
+
+        <!-- Datum en tijd voor het einde -->
+        <Label Text="Einddatum" />
+        <DatePicker x:Name="EndDatePicker" />
+        <TimePicker x:Name="EndTimePicker" />
+
+        <Button Text="Race aanmaken" Clicked="CreateRaceClicked" />
+
+        <!-- Lijstweergave voor bestaande races -->
+        <ScrollView>
+            <CollectionView x:Name="RacesListView" HeightRequest="300">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" Margin="5" BorderColor="LightGray" CornerRadius="10">
+                            <StackLayout>
+                                <Label Text="{Binding Type}" FontSize="20" FontAttributes="Bold" />
+                                <Label Text="{Binding Bet}" FontSize="16" />
+                                <Label Text="{Binding RandomThemes, StringFormat='Willekeurige thema\'s: {0}'}" />
+                                <Label Text="{Binding Start, StringFormat='Start: {0:dd MMM yyyy HH:mm}'}" FontSize="14" TextColor="Gray" />
+                                <Label Text="{Binding End, StringFormat='Einde: {0:dd MMM yyyy HH:mm}'}" FontSize="14" TextColor="Gray" />
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
     </VerticalStackLayout>
 </ContentPage>
