@@ -5,9 +5,6 @@
              Title="FotoPage">
 
     <Grid>
-        <!-- Achtergrondafbeelding -->
-        <Image Source="cameraonfloor.jpg" Aspect="AspectFill" Grid.RowSpan="2" />
-
         <!-- Voeg twee rijen toe: één voor de inhoud en één voor de knop -->
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -15,6 +12,9 @@
             <RowDefinition Height="Auto" />
             <!-- Voor de knop -->
         </Grid.RowDefinitions>
+
+        <!-- Achtergrondafbeelding -->
+        <Image Source="cameraonfloor.jpg" Aspect="AspectFill" Grid.RowSpan="2" />
 
         <!-- Overlay voor laadindicator -->
         <Grid Grid.RowSpan="2" BackgroundColor="Transparent" IsVisible="False" x:Name="LoadingOverlay">
@@ -49,3 +49,5 @@
             Grid.Row="1"/>
     </Grid>
 </ContentPage>
+
+    
